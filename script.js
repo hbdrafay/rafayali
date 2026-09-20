@@ -1,489 +1,752 @@
-const pages = Array.from(document.querySelectorAll(".page"));
-const totalPages = pages.length;
+/* =========================================================
+   RAFAY BIRTHDAY SCRAPBOOK
+   MOBILE SAFE JAVASCRIPT
+========================================================= */
 
-let currentPage = 0;
-let isAnimating = false;
+document.addEventListener("DOMContentLoaded", () => {
 
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const currentPageDisplay = document.getElementById("currentPage");
-const progress = document.getElementById("progress");
+    const pages = Array.from(document.querySelectorAll(".page"));
+    const totalPages = pages.length;
 
-const pageNames = [
-    "Cover",
-    "Chapter I",
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "Chapter II",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "Chapter III",
-    "12",
-    "13",
-    "14",
-    "15",
-    "Chapter IV",
-    "16",
-    "17",
-    "18",
-    "19",
-    "Chapter V",
-    "20",
-    "21",
-    "22",
-    "23",
-    "Chapter VI",
-    "24",
-    "25",
-    "26",
-    "27",
-    "28",
-    "29",
-    "Chapter VII",
-    "30",
-    "31",
-    "32",
-    "33",
-    "34",
-    "Chapter VIII",
-    "35",
-    "36",
-    "Chapter IX",
-    "37",
-    "38",
-    "39",
-    "Chapter X",
-    "40",
-    "41",
-    "42",
-    "Final Chapter",
-    "43",
-    "44",
-    "45"
-];
+    let currentPage = 0;
+    let isAnimating = false;
 
-function updatePageDisplay() {
-    currentPageDisplay.textContent = pageNames[currentPage] || currentPage;
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const currentPageDisplay = document.getElementById("currentPage");
+    const progress = document.getElementById("progress");
 
-    const percentage = (currentPage / (totalPages - 1)) * 100;
-    progress.style.width = `${percentage}%`;
+    const pageNames = [
+        "Cover",
+        "Chapter I",
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+        "Chapter II",
+        "07",
+        "08",
+        "09",
+        "10",
+        "11",
+        "Chapter III",
+        "12",
+        "13",
+        "14",
+        "15",
+        "Chapter IV",
+        "16",
+        "17",
+        "18",
+        "19",
+        "Chapter V",
+        "20",
+        "21",
+        "22",
+        "23",
+        "Chapter VI",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "Chapter VII",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "Chapter VIII",
+        "35",
+        "36",
+        "Chapter IX",
+        "37",
+        "38",
+        "39",
+        "Chapter X",
+        "40",
+        "41",
+        "42",
+        "Final Chapter",
+        "43",
+        "44",
+        "45"
+    ];
 
-    prevBtn.disabled = currentPage === 0;
-    nextBtn.disabled = currentPage === totalPages - 1;
+    /* =====================================================
+       PAGE DISPLAY
+    ===================================================== */
 
-    if (currentPage === totalPages - 1) {
-        nextBtn.style.display = "none";
-    } else {
-        nextBtn.style.display = "block";
+    function updatePageDisplay() {
+
+        if (currentPageDisplay) {
+            currentPageDisplay.textContent =
+                pageNames[currentPage] || currentPage;
+        }
+
+        if (progress) {
+            const percentage =
+                totalPages > 1
+                    ? (currentPage / (totalPages - 1)) * 100
+                    : 0;
+
+            progress.style.width = `${percentage}%`;
+        }
+
+        if (prevBtn) {
+            prevBtn.disabled = currentPage === 0;
+            prevBtn.style.opacity =
+                currentPage === 0 ? "0" : "1";
+
+            prevBtn.style.pointerEvents =
+                currentPage === 0 ? "none" : "auto";
+        }
+
+        if (nextBtn) {
+            nextBtn.disabled =
+                currentPage === totalPages - 1;
+
+            nextBtn.style.display =
+                currentPage === totalPages - 1
+                    ? "none"
+                    : "block";
+        }
     }
 
-    if (currentPage === 0) {
-        prevBtn.style.opacity = "0";
-        prevBtn.style.pointerEvents = "none";
-    } else {
-        prevBtn.style.opacity = "1";
-        prevBtn.style.pointerEvents = "auto";
-    }
-}
 
-function showPage(index, direction = "next") {
-    if (isAnimating || index < 0 || index >= totalPages || index === currentPage) {
-        return;
-    }
+    /* =====================================================
+       SHOW PAGE
+    ===================================================== */
 
-    isAnimating = true;
+    function showPage(index, direction = "next") {
 
-    const oldPage = pages[currentPage];
-    const newPage = pages[index];
+        if (
+            isAnimating ||
+            index < 0 ||
+            index >= totalPages ||
+            index === currentPage
+        ) {
+            return;
+        }
 
-    oldPage.classList.remove("active");
+        isAnimating = true;
 
-    newPage.classList.add("active");
-    newPage.classList.add(direction === "next" ? "turn-next" : "turn-prev");
+        const oldPage = pages[currentPage];
+        const newPage = pages[index];
 
-    currentPage = index;
+        if (oldPage) {
+            oldPage.classList.remove(
+                "active",
+                "turn-next",
+                "turn-prev"
+            );
+        }
 
-    updatePageDisplay();
+        if (newPage) {
+            newPage.classList.add("active");
 
-    setTimeout(() => {
-        newPage.classList.remove("turn-next", "turn-prev");
-        isAnimating = false;
+            newPage.classList.add(
+                direction === "next"
+                    ? "turn-next"
+                    : "turn-prev"
+            );
+        }
 
-        triggerPageEffects();
-    }, 650);
-}
+        currentPage = index;
 
-function showPage(index, direction = "next") {
-    if (
-        isAnimating ||
-        index < 0 ||
-        index >= totalPages ||
-        index === currentPage
-    ) {
-        return;
-    }
-
-    isAnimating = true;
-
-    const oldPage = pages[currentPage];
-    const newPage = pages[index];
-
-    oldPage.classList.remove("active", "turn-next", "turn-prev");
-
-    newPage.classList.add("active");
-    newPage.classList.add(
-        direction === "next" ? "turn-next" : "turn-prev"
-    );
-
-    currentPage = index;
-
-    updatePageDisplay();
-
-    /*
-       Force the browser to recalculate the document height
-       based on the newly active page.
-    */
-    requestAnimationFrame(() => {
-        document.body.style.minHeight =
-            `${document.documentElement.scrollHeight}px`;
-    });
-
-    setTimeout(() => {
-        newPage.classList.remove("turn-next", "turn-prev");
-        isAnimating = false;
+        updatePageDisplay();
 
         window.scrollTo({
             top: 0,
             behavior: "smooth"
         });
 
-        triggerPageEffects();
-    }, 650);
-}
+        setTimeout(() => {
 
+            if (newPage) {
+                newPage.classList.remove(
+                    "turn-next",
+                    "turn-prev"
+                );
+            }
 
-/* COVER */
+            isAnimating = false;
 
-const openBook = document.getElementById("openBook");
+            triggerPageEffects();
 
-openBook.addEventListener("click", () => {
-    createHearts(18);
-    setTimeout(() => {
-        nextPage();
-    }, 350);
-});
-
-
-/* BUTTONS */
-
-nextBtn.addEventListener("click", nextPage);
-prevBtn.addEventListener("click", previousPage);
-
-
-/* KEYBOARD */
-
-document.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowRight" || event.key === " ") {
-        event.preventDefault();
-        nextPage();
+        }, 650);
     }
 
-    if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        previousPage();
-    }
-});
 
-
-/* SWIPE */
-
-let touchStartX = 0;
-let touchEndX = 0;
-
-document.addEventListener("touchstart", (event) => {
-    touchStartX = event.changedTouches[0].screenX;
-});
-
-document.addEventListener("touchend", (event) => {
-    touchEndX = event.changedTouches[0].screenX;
-    handleSwipe();
-});
-
-function handleSwipe() {
-    const difference = touchStartX - touchEndX;
-
-    if (Math.abs(difference) < 50) {
-        return;
-    }
-
-    if (difference > 0) {
-        nextPage();
-    } else {
-        previousPage();
-    }
-}
-
-
-/* SNACKS */
-
-const snickers = document.getElementById("snickers");
-const lays = document.getElementById("lays");
-
-function snackAnimation(element) {
-    element.animate(
-        [
-            { transform: "translateY(0) rotate(0)" },
-            { transform: "translateY(-20px) rotate(-8deg)" },
-            { transform: "translateY(0) rotate(0)" }
-        ],
-        {
-            duration: 500,
-            easing: "ease-out"
+    function nextPage() {
+        if (currentPage < totalPages - 1) {
+            showPage(currentPage + 1, "next");
         }
-    );
-}
-
-snickers.addEventListener("click", () => {
-    snackAnimation(snickers);
-    createHearts(3);
-});
-
-lays.addEventListener("click", () => {
-    snackAnimation(lays);
-    createHearts(3);
-});
+    }
 
 
-/* EXAM PHONE */
-
-const examPhone = document.getElementById("examPhone");
-
-examPhone.addEventListener("click", () => {
-    const text = document.getElementById("internetText");
-
-    text.textContent = "TRYING AGAIN...";
-
-    setTimeout(() => {
-        text.textContent = "STILL NO INTERNET";
-    }, 1200);
-
-    setTimeout(() => {
-        text.textContent = "I THINK WE JUST HAVE TO TALK";
-    }, 2600);
-});
+    function previousPage() {
+        if (currentPage > 0) {
+            showPage(currentPage - 1, "prev");
+        }
+    }
 
 
-/* ENVELOPE */
+    /* =====================================================
+       COVER
+    ===================================================== */
 
-const envelope = document.getElementById("envelope");
-const hiddenLetter = document.getElementById("hiddenLetter");
+    const openBook = document.getElementById("openBook");
 
-envelope.addEventListener("click", () => {
-    envelope.classList.toggle("open");
+    if (openBook) {
+        openBook.addEventListener("click", () => {
 
-    setTimeout(() => {
-        hiddenLetter.classList.toggle("visible");
-    }, 350);
-});
+            createHearts(18);
+
+            setTimeout(() => {
+                nextPage();
+            }, 350);
+
+        });
+    }
 
 
-/* INTERNET CARDS */
+    /* =====================================================
+       NAVIGATION BUTTONS
+    ===================================================== */
 
-const appCards = document.querySelectorAll(".app-card");
-const appPopup = document.getElementById("appPopup");
-const popupTitle = document.getElementById("popupTitle");
-const popupText = document.getElementById("popupText");
-const closePopup = document.getElementById("closePopup");
+    if (nextBtn) {
+        nextBtn.addEventListener("click", nextPage);
+    }
 
-const appMemories = {
-    Rave: "Movies together, late conversations, and pretending we were actually sitting next to each other.",
-    WePlay: "A little bit of competition, a lot of laughing, and somehow always one more game.",
-    "Free Fire": "Because apparently spending time together also meant trying to defeat each other."
-};
+    if (prevBtn) {
+        prevBtn.addEventListener("click", previousPage);
+    }
 
-appCards.forEach(card => {
-    card.addEventListener("click", () => {
-        const memory = card.dataset.memory;
 
-        popupTitle.textContent = memory;
-        popupText.textContent = appMemories[memory];
+    /* =====================================================
+       KEYBOARD
+    ===================================================== */
 
-        appPopup.classList.add("show");
+    document.addEventListener("keydown", (event) => {
+
+        if (
+            event.key === "ArrowRight" ||
+            event.key === " "
+        ) {
+            event.preventDefault();
+            nextPage();
+        }
+
+        if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            previousPage();
+        }
+
     });
-});
-
-closePopup.addEventListener("click", () => {
-    appPopup.classList.remove("show");
-});
 
 
-/* MOVIE TICKETS */
+    /* =====================================================
+       SWIPE
+    ===================================================== */
 
-document.querySelectorAll(".movie-tickets button").forEach(ticket => {
-    ticket.addEventListener("click", () => {
-        ticket.animate(
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener("touchstart", (event) => {
+
+        if (
+            event.changedTouches &&
+            event.changedTouches.length
+        ) {
+            touchStartX =
+                event.changedTouches[0].screenX;
+        }
+
+    }, { passive: true });
+
+
+    document.addEventListener("touchend", (event) => {
+
+        if (
+            event.changedTouches &&
+            event.changedTouches.length
+        ) {
+            touchEndX =
+                event.changedTouches[0].screenX;
+
+            handleSwipe();
+        }
+
+    }, { passive: true });
+
+
+    function handleSwipe() {
+
+        const difference =
+            touchStartX - touchEndX;
+
+        if (Math.abs(difference) < 50) {
+            return;
+        }
+
+        if (difference > 0) {
+            nextPage();
+        } else {
+            previousPage();
+        }
+    }
+
+
+    /* =====================================================
+       SNACKS
+    ===================================================== */
+
+    const snickers =
+        document.getElementById("snickers");
+
+    const lays =
+        document.getElementById("lays");
+
+
+    function snackAnimation(element) {
+
+        if (!element) {
+            return;
+        }
+
+        element.animate(
             [
                 {
-                    transform: "translateY(0) rotate(0)",
-                    opacity: 1
+                    transform: "translateY(0) rotate(0)"
                 },
                 {
-                    transform: "translateY(-35px) rotate(-8deg)",
-                    opacity: 0.3
+                    transform:
+                        "translateY(-20px) rotate(-8deg)"
                 },
                 {
-                    transform: "translateY(0) rotate(0)",
-                    opacity: 1
+                    transform:
+                        "translateY(0) rotate(0)"
                 }
             ],
             {
-                duration: 650,
+                duration: 500,
                 easing: "ease-out"
             }
         );
+    }
 
-        createHearts(2);
+
+    if (snickers) {
+        snickers.addEventListener("click", () => {
+            snackAnimation(snickers);
+            createHearts(3);
+        });
+    }
+
+
+    if (lays) {
+        lays.addEventListener("click", () => {
+            snackAnimation(lays);
+            createHearts(3);
+        });
+    }
+
+
+    /* =====================================================
+       EXAM PHONE
+    ===================================================== */
+
+    const examPhone =
+        document.getElementById("examPhone");
+
+    if (examPhone) {
+
+        examPhone.addEventListener("click", () => {
+
+            const text =
+                document.getElementById("internetText");
+
+            if (!text) {
+                return;
+            }
+
+            text.textContent = "TRYING AGAIN...";
+
+            setTimeout(() => {
+                text.textContent =
+                    "STILL NO INTERNET";
+            }, 1200);
+
+            setTimeout(() => {
+                text.textContent =
+                    "I THINK WE JUST HAVE TO TALK";
+            }, 2600);
+
+        });
+
+    }
+
+
+    /* =====================================================
+       ENVELOPE
+    ===================================================== */
+
+    const envelope =
+        document.getElementById("envelope");
+
+    const hiddenLetter =
+        document.getElementById("hiddenLetter");
+
+
+    if (envelope && hiddenLetter) {
+
+        envelope.addEventListener("click", () => {
+
+            envelope.classList.toggle("open");
+
+            setTimeout(() => {
+                hiddenLetter.classList.toggle("visible");
+            }, 350);
+
+        });
+
+    }
+
+
+    /* =====================================================
+       INTERNET CARDS
+    ===================================================== */
+
+    const appCards =
+        document.querySelectorAll(".app-card");
+
+    const appPopup =
+        document.getElementById("appPopup");
+
+    const popupTitle =
+        document.getElementById("popupTitle");
+
+    const popupText =
+        document.getElementById("popupText");
+
+    const closePopup =
+        document.getElementById("closePopup");
+
+
+    const appMemories = {
+
+        Rave:
+            "Movies together, late conversations, and pretending we were actually sitting next to each other.",
+
+        WePlay:
+            "A little bit of competition, a lot of laughing, and somehow always one more game.",
+
+        "Free Fire":
+            "Because apparently spending time together also meant trying to defeat each other."
+
+    };
+
+
+    appCards.forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            const memory =
+                card.dataset.memory;
+
+            if (
+                appPopup &&
+                popupTitle &&
+                popupText
+            ) {
+
+                popupTitle.textContent =
+                    memory || "";
+
+                popupText.textContent =
+                    appMemories[memory] || "";
+
+                appPopup.classList.add("show");
+            }
+
+        });
+
     });
-});
 
 
-/* RAIN */
+    if (closePopup && appPopup) {
 
-function createRain() {
-    const container = document.getElementById("rain");
+        closePopup.addEventListener("click", () => {
+            appPopup.classList.remove("show");
+        });
 
-    if (!container) {
-        return;
     }
 
-    for (let i = 0; i < 65; i++) {
-        const drop = document.createElement("span");
 
-        drop.className = "rain-drop";
+    /* =====================================================
+       MOVIE TICKETS
+    ===================================================== */
 
-        drop.style.left = `${Math.random() * 100}%`;
-        drop.style.top = `${Math.random() * -100}%`;
-        drop.style.animationDuration = `${0.7 + Math.random() * 0.8}s`;
-        drop.style.animationDelay = `${Math.random() * 2}s`;
-
-        container.appendChild(drop);
-    }
-}
-
-createRain();
+    const tickets =
+        document.querySelectorAll(
+            ".movie-tickets button"
+        );
 
 
-/* COMPLIMENTS */
+    tickets.forEach(ticket => {
 
-const compliments = [
-    "Your smile.",
-    "Your stupid little expressions.",
-    "Your hair.",
-    "Your kindness.",
-    "Your eyes.",
-    "The way you care.",
-    "Your voice.",
-    "The way you say things.",
-    "Your softness.",
-    "The way you love people.",
-    "Your authenticity.",
-    "Your ridiculous cuteness.",
-    "The way you make me laugh.",
-    "Your whole face, honestly.",
-    "Your heart.",
-    "Everything.",
-    "Literally everything.",
-    "Okay. There are too many.",
-    "I told you I would never shut up."
-];
+        ticket.addEventListener("click", () => {
 
-let complimentIndex = 0;
+            ticket.animate(
+                [
+                    {
+                        transform:
+                            "translateY(0) rotate(0)",
+                        opacity: 1
+                    },
+                    {
+                        transform:
+                            "translateY(-35px) rotate(-8deg)",
+                        opacity: 0.3
+                    },
+                    {
+                        transform:
+                            "translateY(0) rotate(0)",
+                        opacity: 1
+                    }
+                ],
+                {
+                    duration: 650,
+                    easing: "ease-out"
+                }
+            );
 
-const complimentText = document.getElementById("complimentText");
-const complimentButton = document.getElementById("complimentButton");
-const complimentCount = document.getElementById("complimentCount");
+            createHearts(2);
 
-complimentButton.addEventListener("click", () => {
-    if (complimentIndex < compliments.length - 1) {
-        complimentIndex++;
-    }
+        });
 
-    complimentText.textContent = compliments[complimentIndex];
-
-    complimentText.style.animation = "none";
-
-    requestAnimationFrame(() => {
-        complimentText.style.animation = "complimentIn 0.4s ease";
     });
 
-    complimentCount.textContent = Math.min(
-        complimentIndex + 1,
-        compliments.length
-    );
 
-    if (complimentIndex === compliments.length - 1) {
-        complimentButton.textContent = "okay okay 😭";
-        createHearts(15);
-    } else {
-        createHearts(2);
-    }
-});
+    /* =====================================================
+       RAIN
+    ===================================================== */
 
+    function createRain() {
 
-/* FLOATING HEARTS */
+        const container =
+            document.getElementById("rain");
 
-function createHearts(amount = 5) {
-    const container = document.getElementById("floatingHearts");
+        if (!container) {
+            return;
+        }
 
-    for (let i = 0; i < amount; i++) {
-        const heart = document.createElement("span");
+        container.innerHTML = "";
 
-        heart.className = "floating-heart";
-        heart.textContent = Math.random() > 0.25 ? "♥" : "♡";
+        for (let i = 0; i < 65; i++) {
 
-        heart.style.left = `${10 + Math.random() * 80}%`;
-        heart.style.bottom = `${-20 + Math.random() * 10}px`;
-        heart.style.fontSize = `${12 + Math.random() * 22}px`;
-        heart.style.animationDuration = `${2.5 + Math.random() * 2.5}s`;
-        heart.style.animationDelay = `${Math.random() * 0.5}s`;
+            const drop =
+                document.createElement("span");
 
-        container.appendChild(heart);
+            drop.className = "rain-drop";
 
-        setTimeout(() => {
-            heart.remove();
-        }, 6000);
-    }
-}
+            drop.style.left =
+                `${Math.random() * 100}%`;
 
+            drop.style.top =
+                `${Math.random() * -100}%`;
 
-/* CONFETTI */
+            drop.style.animationDuration =
+                `${0.7 + Math.random() * 0.8}s`;
 
-function createConfetti(amount = 80) {
-    const container = document.getElementById("confetti");
+            drop.style.animationDelay =
+                `${Math.random() * 2}s`;
 
-    if (!container) {
-        return;
+            container.appendChild(drop);
+        }
+
     }
 
-    container.innerHTML = "";
+    createRain();
 
-    for (let i = 0; i < amount; i++) {
-        const piece = document.createElement("span");
 
-        piece.className = "confetti-piece";
+    /* =====================================================
+       COMPLIMENTS
+    ===================================================== */
 
-        piece.style.left = `${Math.random() * 100}%`;
-        piece.style.width = `${5 + Math.random() * 6}px`;
-        piece.style.height = `${7 + Math.random() * 10}px`;
-        piece.style.animationDelay = `${Math.random() * 1.2}s`;
-        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    const compliments = [
+
+        "Your smile.",
+        "Your stupid little expressions.",
+        "Your hair.",
+        "Your kindness.",
+        "Your eyes.",
+        "The way you care.",
+        "Your voice.",
+        "The way you say things.",
+        "Your softness.",
+        "The way you love people.",
+        "Your authenticity.",
+        "Your ridiculous cuteness.",
+        "The way you make me laugh.",
+        "Your whole face, honestly.",
+        "Your heart.",
+        "Everything.",
+        "Literally everything.",
+        "Okay. There are too many.",
+        "I told you I would never shut up."
+
+    ];
+
+
+    let complimentIndex = 0;
+
+    const complimentText =
+        document.getElementById("complimentText");
+
+    const complimentButton =
+        document.getElementById("complimentButton");
+
+    const complimentCount =
+        document.getElementById("complimentCount");
+
+
+    if (complimentButton) {
+
+        complimentButton.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    complimentIndex <
+                    compliments.length - 1
+                ) {
+                    complimentIndex++;
+                }
+
+                if (complimentText) {
+
+                    complimentText.textContent =
+                        compliments[complimentIndex];
+
+                    complimentText.style.animation =
+                        "none";
+
+                    requestAnimationFrame(() => {
+
+                        complimentText.style.animation =
+                            "complimentIn 0.4s ease";
+
+                    });
+
+                }
+
+                if (complimentCount) {
+
+                    complimentCount.textContent =
+                        Math.min(
+                            complimentIndex + 1,
+                            compliments.length
+                        );
+
+                }
+
+                if (
+                    complimentIndex ===
+                    compliments.length - 1
+                ) {
+
+                    complimentButton.textContent =
+                        "okay okay 😭";
+
+                    createHearts(15);
+
+                } else {
+
+                    createHearts(2);
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       FLOATING HEARTS
+    ===================================================== */
+
+    function createHearts(amount = 5) {
+
+        const container =
+            document.getElementById("floatingHearts");
+
+        if (!container) {
+            return;
+        }
+
+        for (let i = 0; i < amount; i++) {
+
+            const heart =
+                document.createElement("span");
+
+            heart.className =
+                "floating-heart";
+
+            heart.textContent =
+                Math.random() > 0.25
+                    ? "♥"
+                    : "♡";
+
+            heart.style.left =
+                `${10 + Math.random() * 80}%`;
+
+            heart.style.bottom =
+                `${-20 + Math.random() * 10}px`;
+
+            heart.style.fontSize =
+                `${12 + Math.random() * 22}px`;
+
+            heart.style.animationDuration =
+                `${2.5 + Math.random() * 2.5}s`;
+
+            heart.style.animationDelay =
+                `${Math.random() * 0.5}s`;
+
+            container.appendChild(heart);
+
+            setTimeout(() => {
+
+                if (heart.parentNode) {
+                    heart.remove();
+                }
+
+            }, 6000);
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CONFETTI
+    ===================================================== */
+
+    function createConfetti(amount = 80) {
+
+        const container =
+            document.getElementById("confetti");
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
 
         const colors = [
             "#9e2734",
@@ -493,94 +756,206 @@ function createConfetti(amount = 80) {
             "#e7d7ae"
         ];
 
-        piece.style.background =
-            colors[Math.floor(Math.random() * colors.length)];
+        for (let i = 0; i < amount; i++) {
 
-        container.appendChild(piece);
-    }
-}
+            const piece =
+                document.createElement("span");
 
+            piece.className =
+                "confetti-piece";
 
-/* PAGE EFFECTS */
+            piece.style.left =
+                `${Math.random() * 100}%`;
 
-function triggerPageEffects() {
-    const page = pages[currentPage];
+            piece.style.width =
+                `${5 + Math.random() * 6}px`;
 
-    if (!page) {
-        return;
-    }
+            piece.style.height =
+                `${7 + Math.random() * 10}px`;
 
-    if (
-        page.classList.contains("notification-page") ||
-        page.classList.contains("message-page")
-    ) {
-        setTimeout(() => createHearts(4), 500);
-    }
+            piece.style.animationDelay =
+                `${Math.random() * 1.2}s`;
 
-    if (page.classList.contains("realization-page")) {
-        setTimeout(() => createHearts(6), 400);
-    }
+            piece.style.transform =
+                `rotate(${Math.random() * 360}deg)`;
 
-    if (page.classList.contains("confession-page")) {
-        setTimeout(() => createHearts(10), 500);
-    }
+            piece.style.background =
+                colors[
+                    Math.floor(
+                        Math.random() * colors.length
+                    )
+                ];
 
-    if (page.classList.contains("ending-page")) {
-        setTimeout(() => {
-            createConfetti();
-            createHearts(25);
-        }, 400);
-    }
-}
+            container.appendChild(piece);
 
+        }
 
-/* PAGE CLICK */
-
-document.addEventListener("click", (event) => {
-    const page = event.target.closest(".page");
-
-    if (!page) {
-        return;
     }
 
-    if (
-        event.target.closest("button") ||
-        event.target.closest(".envelope") ||
-        event.target.closest(".snack-card") ||
-        event.target.closest(".app-card")
-    ) {
-        return;
+
+    /* =====================================================
+       PAGE EFFECTS
+    ===================================================== */
+
+    function triggerPageEffects() {
+
+        const page =
+            pages[currentPage];
+
+        if (!page) {
+            return;
+        }
+
+
+        if (
+            page.classList.contains(
+                "notification-page"
+            ) ||
+            page.classList.contains(
+                "message-page"
+            )
+        ) {
+
+            setTimeout(() => {
+                createHearts(4);
+            }, 500);
+
+        }
+
+
+        if (
+            page.classList.contains(
+                "realization-page"
+            )
+        ) {
+
+            setTimeout(() => {
+                createHearts(6);
+            }, 400);
+
+        }
+
+
+        if (
+            page.classList.contains(
+                "confession-page"
+            )
+        ) {
+
+            setTimeout(() => {
+                createHearts(10);
+            }, 500);
+
+        }
+
+
+        if (
+            page.classList.contains(
+                "ending-page"
+            )
+        ) {
+
+            setTimeout(() => {
+
+                createConfetti();
+                createHearts(25);
+
+            }, 400);
+
+        }
+
     }
 
-    if (Math.random() > 0.7) {
-        createHearts(1);
-    }
-});
+
+    /* =====================================================
+       PAGE CLICK
+    ===================================================== */
+
+    document.addEventListener(
+        "click",
+        (event) => {
+
+            const page =
+                event.target.closest(".page");
+
+            if (!page) {
+                return;
+            }
+
+            if (
+                event.target.closest("button") ||
+                event.target.closest(".envelope") ||
+                event.target.closest(".snack-card") ||
+                event.target.closest(".app-card")
+            ) {
+                return;
+            }
+
+            if (Math.random() > 0.7) {
+                createHearts(1);
+            }
+
+        }
+    );
 
 
-/* LOAD */
+    /* =====================================================
+       INITIALIZE
+    ===================================================== */
 
-window.addEventListener("load", () => {
-    setTimeout(() => {
-        document.getElementById("loading").classList.add("hidden");
+    pages.forEach(page => {
+        page.classList.remove(
+            "active",
+            "turn-next",
+            "turn-prev"
+        );
+    });
 
-        pages.forEach(page => {
-            page.classList.remove("active");
-        });
-
+    if (pages[0]) {
         pages[0].classList.add("active");
-
-        updatePageDisplay();
-
-        document.body.style.minHeight =
-            `${document.documentElement.scrollHeight}px`;
-    }, 900);
-});
-
-/* PERIODIC LITTLE HEARTS */
-
-setInterval(() => {
-    if (currentPage > 0 && Math.random() > 0.55) {
-        createHearts(1);
     }
-}, 5000);
+
+    currentPage = 0;
+
+    updatePageDisplay();
+
+
+    /* =====================================================
+       HIDE LOADING SCREEN
+       
+       IMPORTANT:
+       This is deliberately LAST.
+       Nothing before this should be able to stop
+       the loading screen from disappearing.
+    ===================================================== */
+
+    const loading =
+        document.getElementById("loading");
+
+    if (loading) {
+
+        setTimeout(() => {
+
+            loading.classList.add("hidden");
+
+        }, 900);
+
+    }
+
+
+    /* =====================================================
+       PERIODIC HEARTS
+    ===================================================== */
+
+    setInterval(() => {
+
+        if (
+            currentPage > 0 &&
+            Math.random() > 0.55
+        ) {
+            createHearts(1);
+        }
+
+    }, 5000);
+
+});
