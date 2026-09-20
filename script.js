@@ -120,16 +120,52 @@ function showPage(index, direction = "next") {
     }, 650);
 }
 
-function nextPage() {
-    if (currentPage < totalPages - 1) {
-        showPage(currentPage + 1, "next");
+function showPage(index, direction = "next") {
+    if (
+        isAnimating ||
+        index < 0 ||
+        index >= totalPages ||
+        index === currentPage
+    ) {
+        return;
     }
-}
 
-function previousPage() {
-    if (currentPage > 0) {
-        showPage(currentPage - 1, "prev");
-    }
+    isAnimating = true;
+
+    const oldPage = pages[currentPage];
+    const newPage = pages[index];
+
+    oldPage.classList.remove("active", "turn-next", "turn-prev");
+
+    newPage.classList.add("active");
+    newPage.classList.add(
+        direction === "next" ? "turn-next" : "turn-prev"
+    );
+
+    currentPage = index;
+
+    updatePageDisplay();
+
+    /*
+       Force the browser to recalculate the document height
+       based on the newly active page.
+    */
+    requestAnimationFrame(() => {
+        document.body.style.minHeight =
+            `${document.documentElement.scrollHeight}px`;
+    });
+
+    setTimeout(() => {
+        newPage.classList.remove("turn-next", "turn-prev");
+        isAnimating = false;
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+        triggerPageEffects();
+    }, 650);
 }
 
 
@@ -527,10 +563,19 @@ document.addEventListener("click", (event) => {
 window.addEventListener("load", () => {
     setTimeout(() => {
         document.getElementById("loading").classList.add("hidden");
+
+        pages.forEach(page => {
+            page.classList.remove("active");
+        });
+
+        pages[0].classList.add("active");
+
         updatePageDisplay();
+
+        document.body.style.minHeight =
+            `${document.documentElement.scrollHeight}px`;
     }, 900);
 });
-
 
 /* PERIODIC LITTLE HEARTS */
 
